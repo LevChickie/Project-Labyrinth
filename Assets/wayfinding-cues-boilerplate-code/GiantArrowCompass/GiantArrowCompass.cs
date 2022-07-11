@@ -6,7 +6,7 @@ public class GiantArrowCompass : MonoBehaviour
 {
     //[SerializeField] private Transform target;
 
-    public Transform target;
+    private Transform target = null;
 
     private void Start()
     {
@@ -14,6 +14,11 @@ public class GiantArrowCompass : MonoBehaviour
     }
     private void Update()
     {
+        target = Target.Instance.transform;
+
+        if (target = null)
+            return;
+
         transform.LookAt(target.position);
     }
 }
