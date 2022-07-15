@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameBoardManager : MonoBehaviour
 {
     public GameObject wallHorizontal;
+    public GameObject arrow;
     public GameObject wallVertical;
     public GameObject scores;
     public GameObject player;
@@ -30,6 +31,17 @@ public class GameBoardManager : MonoBehaviour
 
     void SetupGame()
     {
+        string loadParameter = CrossSceneInformation.CrossSceneInfo;
+        if(loadParameter == "arrow")
+        {
+            Debug.Log("Arrow");
+            lightBeam.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("Lightbeam");
+            arrow.SetActive(false);
+        }
         //wallCoordinates = new List<Vector2>();
         for (int i = -4; i <= 4; i++)
         {
@@ -112,11 +124,22 @@ public class GameBoardManager : MonoBehaviour
             doorXCord = (int)Random.Range(-labirinthWidth / 2, labirinthWidth / 2);
             euler = new Vector3(0, -90, 0);
         }
-        Instantiate(door, new Vector3(doorXCord, 1.7f, doorYCord), Quaternion.Euler(euler));
+        //print("Door2: " + door.transform.position);
+        //door.transform.rotation = Quaternion.Euler(euler);
+        //sdoor.transform.localRotation = Quaternion.Euler(euler);
+        //door.SetActive(false);
         Instantiate(lightBeam, new Vector3(doorXCord, 20f, doorYCord), Quaternion.Euler(euler));
+        //Instantiate(door, new Vector3(doorXCord, 1.7f, doorYCord), Quaternion.Euler(euler));
         gameOver.SetActive(false);
         position = new Vector3(Random.Range(labirinthHeight / 3, -labirinthHeight / 3), 0, Random.Range(labirinthWidth / 3, -labirinthWidth / 3));
         player.transform.localPosition = position;
+        
+        position = new Vector3(doorXCord, 1.7f, doorYCord);
+        print("Door: "+position);
+        //door.transform.position = new Vector3(doorXCord, 1.7f, doorYCord);
+        door.GetComponent<Target>().Move(position) ;
+
+        print("Door2: "+door.transform.position);
     }
 
 }
