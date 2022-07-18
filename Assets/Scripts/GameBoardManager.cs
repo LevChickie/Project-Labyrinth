@@ -15,6 +15,7 @@ public class GameBoardManager : MonoBehaviour
     public GameObject enemy;
     public GameObject trap;
     public GameObject gameOver;
+
     private int doorXCord;
     private int doorYCord;
     public int labirinthWidth;
@@ -129,7 +130,10 @@ public class GameBoardManager : MonoBehaviour
         //sdoor.transform.localRotation = Quaternion.Euler(euler);
         //door.SetActive(false);
         Instantiate(lightBeam, new Vector3(doorXCord, 20f, doorYCord), Quaternion.Euler(euler));
-        //Instantiate(door, new Vector3(doorXCord, 1.7f, doorYCord), Quaternion.Euler(euler));
+        GameObject door_m =  Instantiate(door, new Vector3(doorXCord, 1.7f, doorYCord), Quaternion.Euler(euler));
+
+        arrow.GetComponent<GiantArrowCompass>().SetTarget(door_m);
+
         gameOver.SetActive(false);
         position = new Vector3(Random.Range(labirinthHeight / 3, -labirinthHeight / 3), 0, Random.Range(labirinthWidth / 3, -labirinthWidth / 3));
         player.transform.localPosition = position;
@@ -137,7 +141,7 @@ public class GameBoardManager : MonoBehaviour
         position = new Vector3(doorXCord, 1.7f, doorYCord);
         print("Door: "+position);
         //door.transform.position = new Vector3(doorXCord, 1.7f, doorYCord);
-        door.GetComponent<Target>().Move(position) ;
+        //door.GetComponent<Target>().Move(position);
 
         print("Door2: "+door.transform.position);
     }

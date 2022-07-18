@@ -184,7 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a26e2652b4eb684b903df6b1155e4c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
 --- !u!1 &606533316
 GameObject:
   m_ObjectHideFlags: 3
@@ -850,7 +849,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.0376813, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -866,7 +865,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924074063}
-  m_LocalRotation: {x: 0.24063106, y: -0.000000014463316, z: 0.0000000035856822, w: 0.9706167}
+  m_LocalRotation: {x: 0.24063106, y: 1.6719664e-15, z: -4.108041e-16, w: 0.9706167}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -953,12 +952,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.21347469, y: -0.0033175363, z: 0.000739722, w: 0.9769427}
+  m_LocalRotation: {x: 0.21347469, y: -0.0028944374, z: 0.0006454479, w: 0.9769441}
   m_LocalPosition: {x: -4.6000004, y: 7.720476, z: -9.217026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1907800711}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
@@ -1210,7 +1208,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.0376813, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1363,7 +1361,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.0376813, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1538,7 +1536,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.0376813, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1554,7 +1552,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1103072323}
-  m_LocalRotation: {x: 0.21553563, y: -0.0041487906, z: 0.00091574434, w: 0.97648674}
+  m_LocalRotation: {x: 0.2155361, y: -0.0036196602, z: 0.00079895166, w: 0.9764888}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1593,6 +1591,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wallHorizontal: {fileID: 472419048036705066, guid: b8a1bd0266a91574ead3ebc81ad51695, type: 3}
+  arrow: {fileID: 557969398}
   wallVertical: {fileID: 2909471775788289788, guid: fe0259c3eaa095b45956e9b6e878c39c, type: 3}
   scores: {fileID: 1594879466734162, guid: c82411508e9628b4e9f629bf2800542f, type: 3}
   player: {fileID: 1750789979}
@@ -2586,14 +2585,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1907800710}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.06254369, y: 0.28490973, z: 10.010358}
-  m_LocalScale: {x: 0.030000003, y: 0.030000007, z: 0.030000007}
+  m_LocalRotation: {x: 0.21347469, y: -0.0028944374, z: 0.0006454479, w: 0.9769441}
+  m_LocalPosition: {x: 0, y: 176.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 557969399}
-  m_Father: {fileID: 963194228}
-  m_RootOrder: 0
+  m_Father: {fileID: 2642638978604961734}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2109481177
 PrefabInstance:
@@ -2806,6 +2805,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a00b85f6728d1f74bbf06cffc884a044, type: 3}
+--- !u!4 &2642638978604961734 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2642638978196952318, guid: a00b85f6728d1f74bbf06cffc884a044, type: 3}
+  m_PrefabInstance: {fileID: 2642638978604961733}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5935236811561072817
 PrefabInstance:
   m_ObjectHideFlags: 0

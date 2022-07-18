@@ -6,19 +6,26 @@ public class GiantArrowCompass : MonoBehaviour
 {
     //[SerializeField] private Transform target;
 
-    private Transform target = null;
+    private Vector3 target_position = Vector3.zero;
 
-    private void Start()
+    //private void Start()
+    //{
+    //    target = Target.Instance.transform;
+    //}
+
+    public void SetTarget(GameObject obj)
     {
-        target = Target.Instance.transform;
+        target_position = obj.transform.position;
     }
     private void Update()
     {
-        target = Target.Instance.transform;
+        //target = Target.Instance.transform;
 
-        if (target = null)
+        if (target_position == Vector3.zero)
             return;
 
-        transform.LookAt(target.position);
+        Vector3 look_position = new Vector3(target_position.x, transform.position.y, target_position.z);
+
+        transform.LookAt(target_position);
     }
 }

@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Target : MonoBehaviour
 {
-    public static Target Instance;
-    // Start is called before the first frame update
+    //public static Target Instance;
+    //// Start is called before the first frame update
 
-    private void Awake()
-    {
-        Instance = this;
-    }
+
+    //private void Update()
+    //{
+    //    if (Instance == null)
+    //        Instance = this;
+    //}
 }
