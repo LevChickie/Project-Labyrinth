@@ -28,6 +28,11 @@ public class PlayerScript : MonoBehaviour
     public Transform attackpoint;
     private bool playerUnderAttack;
     private Animator playerAnimator;
+
+    public GameObject trapActivatedPrefab;
+    public GameObject lootCollectedPrefab;
+    public GameObject healthRestoredPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +48,10 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    
+        if (Input.GetKeyDown(KeyCode.F1))
+            ScreenCapture.CaptureScreenshot(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop) + "/Screenshot_" + (System.Environment.TickCount) + ".png");
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             PlayerPrefs.SetInt("SavedScene", SceneManager.GetActiveScene().buildIndex);
@@ -53,7 +62,7 @@ public class PlayerScript : MonoBehaviour
             //playerAnimator.SetTrigger("Hurt");
             Hurt(1);
         }
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             playerAnimator.SetTrigger("Attack");
             Attack();
@@ -85,6 +94,8 @@ public class PlayerScript : MonoBehaviour
             points += (int)Random.Range(0.0f, 10.0f);
             triggerCollider.gameObject.SetActive(false);
             Score.text = "Loot: " + points + " gold";
+            if (lootCollectedPrefab)
+                Instantiate(lootCollectedPrefab, transform.position, lootCollectedPrefab.transform.rotation);
         }
         else if (triggerCollider.gameObject.tag == "Enemy")
         {
@@ -98,6 +109,9 @@ public class PlayerScript : MonoBehaviour
             Hurt(50);
             triggerCollider.gameObject.SetActive(false);
             playerAnimator.SetTrigger("Hurt");
+            
+            if (trapActivatedPrefab)
+                Instantiate(trapActivatedPrefab, triggerCollider.transform.position, trapActivatedPrefab.transform.rotation);
         }
         else if (triggerCollider.gameObject.tag == "Door")
         {
@@ -118,6 +132,8 @@ public class PlayerScript : MonoBehaviour
                     health = maxhealth;
                 }
                 triggerCollider.gameObject.SetActive(false);
+                if (healthRestoredPrefab)
+                    Instantiate(healthRestoredPrefab, transform.position, healthRestoredPrefab.transform.rotation);
             }
         }
     }
@@ -166,7 +182,7 @@ public class PlayerScript : MonoBehaviour
             {
                 playerAnimator.SetBool("Walk", false);
             }
-            if (transform.localPosition.y < 0f)
+            if (!isGrounded && controller.isGrounded)
             {
                 transform.localPosition = new Vector3(transform.localPosition.x, 1f, transform.localPosition.z);
                 isGrounded = true;

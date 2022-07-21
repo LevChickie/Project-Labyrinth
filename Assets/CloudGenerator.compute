@@ -1,0 +1,363 @@
+﻿#pragma kernel CSMain
+
+RWTexture3D<float> Result;
+float3 g_VolumeRes;
+float3 g_VolumeOffset;
+
+float3 mod(float3 x, float3 y)
+{
+	return x - y * floor(x / y);
+}
+
+float2 mod289(float2 x) {
+	return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+float3 mod289(float3 x)
+{
+	return x - floor(x / 289.0) * 289.0;
+}
+
+float4 mod289(float4 x)
+{
+	return x - floor(x / 289.0) * 289.0;
+}
+
+float4 permute(float4 x)
+{
+	return mod289(((x * 34.0) + 1.0) * x);
+}
+
+float4 taylorInvSqrt(float4 r)
+{
+	return (float4)1.79284291400159 - r * 0.85373472095314;
+}
+
+float3 fade(float3 t) {
+	return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
+}
+
+// Classic Perlin noise, periodic variant
+float pnoise(float3 P, float3 rep)
+{
+	float3 Pi0 = mod(floor(P), rep); // Integer part, modulo period
+	float3 Pi1 = mod(Pi0 + (float3)1.0, rep); // Integer part + 1, mod period
+	Pi0 = mod289(Pi0);
+	Pi1 = mod289(Pi1);
+	float3 Pf0 = frac(P); // fracional part for interpolation
+	float3 Pf1 = Pf0 - (float3)1.0; // fracional part - 1.0
+	float4 ix = float4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+	float4 iy = float4(Pi0.y, Pi0.y, Pi1.y, Pi1.y);
+	float4 iz0 = (float4)Pi0.z;
+	float4 iz1 = (float4)Pi1.z;
+
+	float4 ixy = permute(permute(ix) + iy);
+	float4 ixy0 = permute(ixy + iz0);
+	float4 ixy1 = permute(ixy + iz1);
+
+	float4 gx0 = ixy0 / 7.0;
+	float4 gy0 = frac(floor(gx0) / 7.0) - 0.5;
+	gx0 = frac(gx0);
+	float4 gz0 = (float4)0.5 - abs(gx0) - abs(gy0);
+	float4 sz0 = step(gz0, (float4)0.0);
+	gx0 -= sz0 * (step((float4)0.0, gx0) - 0.5);
+	gy0 -= sz0 * (step((float4)0.0, gy0) - 0.5);
+
+	float4 gx1 = ixy1 / 7.0;
+	float4 gy1 = frac(floor(gx1) / 7.0) - 0.5;
+	gx1 = frac(gx1);
+	float4 gz1 = (float4)0.5 - abs(gx1) - abs(gy1);
+	float4 sz1 = step(gz1, (float4)0.0);
+	gx1 -= sz1 * (step((float4)0.0, gx1) - 0.5);
+	gy1 -= sz1 * (step((float4)0.0, gy1) - 0.5);
+
+	float3 g000 = float3(gx0.x, gy0.x, gz0.x);
+	float3 g100 = float3(gx0.y, gy0.y, gz0.y);
+	float3 g010 = float3(gx0.z, gy0.z, gz0.z);
+	float3 g110 = float3(gx0.w, gy0.w, gz0.w);
+	float3 g001 = float3(gx1.x, gy1.x, gz1.x);
+	float3 g101 = float3(gx1.y, gy1.y, gz1.y);
+	float3 g011 = float3(gx1.z, gy1.z, gz1.z);
+	float3 g111 = float3(gx1.w, gy1.w, gz1.w);
+
+	float4 norm0 = taylorInvSqrt(float4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+	g000 *= norm0.x;
+	g010 *= norm0.y;
+	g100 *= norm0.z;
+	g110 *= norm0.w;
+	float4 norm1 = taylorInvSqrt(float4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+	g001 *= norm1.x;
+	g011 *= norm1.y;
+	g101 *= norm1.z;
+	g111 *= norm1.w;
+
+	float n000 = dot(g000, Pf0);
+	float n100 = dot(g100, float3(Pf1.x, Pf0.y, Pf0.z));
+	float n010 = dot(g010, float3(Pf0.x, Pf1.y, Pf0.z));
+	float n110 = dot(g110, float3(Pf1.x, Pf1.y, Pf0.z));
+	float n001 = dot(g001, float3(Pf0.x, Pf0.y, Pf1.z));
+	float n101 = dot(g101, float3(Pf1.x, Pf0.y, Pf1.z));
+	float n011 = dot(g011, float3(Pf0.x, Pf1.y, Pf1.z));
+	float n111 = dot(g111, Pf1);
+
+	float3 fade_xyz = fade(Pf0);
+	float4 n_z = lerp(float4(n000, n100, n010, n110), float4(n001, n101, n011, n111), fade_xyz.z);
+	float2 n_yz = lerp(n_z.xy, n_z.zw, fade_xyz.y);
+	float n_xyz = lerp(n_yz.x, n_yz.y, fade_xyz.x);
+	return 2.2 * n_xyz;
+}
+
+float3 mod7(float3 x)
+{
+	return x - floor(x * (1.0 / 7.0)) * 7.0;
+}
+
+// Modulo 289 without a division (only multiplications)
+/*
+float3 mod289(float3 x)
+{
+	return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+*/
+
+float3 permute(float3 x)
+{
+	return mod289(((x * 34.0) + 1.0) * x);
+}
+
+float3 permute(float3 x, float3 rep)
+{
+	return permute(float3((x + rep * 10) % rep));
+}
+
+float cellular(float3 P, float3 rep)
+{
+	static const float K = 0.142857142857; // 1/7
+	static const float Ko = 0.428571428571; // 1/2-K/2
+	static const float K2 = 0.020408163265306; // 1/(7*7)
+	static const float Kz = 0.166666666667; // 1/6
+	static const float Kzo = 0.416666666667; // 1/2-1/6*2
+	static const float jitter = 1.0; // smaller jitter gives more regular pattern
+
+	float3 Pi = mod289(floor(P));
+	float3 Pf = frac(P) - 0.5;
+
+	float3 Pfx = Pf.x + float3(1.0, 0.0, -1.0);
+	float3 Pfy = Pf.y + float3(1.0, 0.0, -1.0);
+	float3 Pfz = Pf.z + float3(1.0, 0.0, -1.0);
+
+	float3 p = permute(Pi.x + float3(-1.0, 0.0, 1.0), rep);
+	float3 p1 = permute(p + Pi.y - 1.0, rep);
+	float3 p2 = permute(p + Pi.y, rep);
+	float3 p3 = permute(p + Pi.y + 1.0, rep);
+
+	float3 p11 = permute(p1 + Pi.z - 1.0, rep);
+	float3 p12 = permute(p1 + Pi.z, rep);
+	float3 p13 = permute(p1 + Pi.z + 1.0, rep);
+
+	float3 p21 = permute(p2 + Pi.z - 1.0, rep);
+	float3 p22 = permute(p2 + Pi.z, rep);
+	float3 p23 = permute(p2 + Pi.z + 1.0, rep);
+
+	float3 p31 = permute(p3 + Pi.z - 1.0, rep);
+	float3 p32 = permute(p3 + Pi.z, rep);
+	float3 p33 = permute(p3 + Pi.z + 1.0, rep);
+
+	float3 ox11 = frac(p11 * K) - Ko;
+	float3 oy11 = mod7(floor(p11 * K)) * K - Ko;
+	float3 oz11 = floor(p11 * K2) * Kz - Kzo; // p11 < 289 guaranteed
+
+	float3 ox12 = frac(p12 * K) - Ko;
+	float3 oy12 = mod7(floor(p12 * K)) * K - Ko;
+	float3 oz12 = floor(p12 * K2) * Kz - Kzo;
+
+	float3 ox13 = frac(p13 * K) - Ko;
+	float3 oy13 = mod7(floor(p13 * K)) * K - Ko;
+	float3 oz13 = floor(p13 * K2) * Kz - Kzo;
+
+	float3 ox21 = frac(p21 * K) - Ko;
+	float3 oy21 = mod7(floor(p21 * K)) * K - Ko;
+	float3 oz21 = floor(p21 * K2) * Kz - Kzo;
+
+	float3 ox22 = frac(p22 * K) - Ko;
+	float3 oy22 = mod7(floor(p22 * K)) * K - Ko;
+	float3 oz22 = floor(p22 * K2) * Kz - Kzo;
+
+	float3 ox23 = frac(p23 * K) - Ko;
+	float3 oy23 = mod7(floor(p23 * K)) * K - Ko;
+	float3 oz23 = floor(p23 * K2) * Kz - Kzo;
+
+	float3 ox31 = frac(p31 * K) - Ko;
+	float3 oy31 = mod7(floor(p31 * K)) * K - Ko;
+	float3 oz31 = floor(p31 * K2) * Kz - Kzo;
+
+	float3 ox32 = frac(p32 * K) - Ko;
+	float3 oy32 = mod7(floor(p32 * K)) * K - Ko;
+	float3 oz32 = floor(p32 * K2) * Kz - Kzo;
+
+	float3 ox33 = frac(p33 * K) - Ko;
+	float3 oy33 = mod7(floor(p33 * K)) * K - Ko;
+	float3 oz33 = floor(p33 * K2) * Kz - Kzo;
+
+	float3 dx11 = Pfx + jitter * ox11;
+	float3 dy11 = Pfy.x + jitter * oy11;
+	float3 dz11 = Pfz.x + jitter * oz11;
+
+	float3 dx12 = Pfx + jitter * ox12;
+	float3 dy12 = Pfy.x + jitter * oy12;
+	float3 dz12 = Pfz.y + jitter * oz12;
+
+	float3 dx13 = Pfx + jitter * ox13;
+	float3 dy13 = Pfy.x + jitter * oy13;
+	float3 dz13 = Pfz.z + jitter * oz13;
+
+	float3 dx21 = Pfx + jitter * ox21;
+	float3 dy21 = Pfy.y + jitter * oy21;
+	float3 dz21 = Pfz.x + jitter * oz21;
+
+	float3 dx22 = Pfx + jitter * ox22;
+	float3 dy22 = Pfy.y + jitter * oy22;
+	float3 dz22 = Pfz.y + jitter * oz22;
+
+	float3 dx23 = Pfx + jitter * ox23;
+	float3 dy23 = Pfy.y + jitter * oy23;
+	float3 dz23 = Pfz.z + jitter * oz23;
+
+	float3 dx31 = Pfx + jitter * ox31;
+	float3 dy31 = Pfy.z + jitter * oy31;
+	float3 dz31 = Pfz.x + jitter * oz31;
+
+	float3 dx32 = Pfx + jitter * ox32;
+	float3 dy32 = Pfy.z + jitter * oy32;
+	float3 dz32 = Pfz.y + jitter * oz32;
+
+	float3 dx33 = Pfx + jitter * ox33;
+	float3 dy33 = Pfy.z + jitter * oy33;
+	float3 dz33 = Pfz.z + jitter * oz33;
+
+	float3 d11 = dx11 * dx11 + dy11 * dy11 + dz11 * dz11;
+	float3 d12 = dx12 * dx12 + dy12 * dy12 + dz12 * dz12;
+	float3 d13 = dx13 * dx13 + dy13 * dy13 + dz13 * dz13;
+	float3 d21 = dx21 * dx21 + dy21 * dy21 + dz21 * dz21;
+	float3 d22 = dx22 * dx22 + dy22 * dy22 + dz22 * dz22;
+	float3 d23 = dx23 * dx23 + dy23 * dy23 + dz23 * dz23;
+	float3 d31 = dx31 * dx31 + dy31 * dy31 + dz31 * dz31;
+	float3 d32 = dx32 * dx32 + dy32 * dy32 + dz32 * dz32;
+	float3 d33 = dx33 * dx33 + dy33 * dy33 + dz33 * dz33;
+	float3 d1 = min(min(d11, d12), d13);
+	float3 d2 = min(min(d21, d22), d23);
+	float3 d3 = min(min(d31, d32), d33);
+	float3 d = min(min(d1, d2), d3);
+
+	return min(min(d.x, d.y), d.z); // F1 duplicated, no F2 computed
+}
+
+
+// Cellular noise, returning F1 and F2 in a float2.
+// Standard 3x3 search window for good F1 and F2 values
+float2 cellular(float2 P) {
+	static const float K = 0.142857142857; // 1/7
+	static const float Ko = 0.428571428571; // 3/7
+	static const float jitter = 1.0; // Less gives more regular pattern
+
+	float2 Pi = mod289(floor(P));
+	float2 Pf = frac(P);
+	float3 oi = float3(-1.0, 0.0, 1.0);
+	float3 of = float3(-0.5, 0.5, 1.5);
+	float3 px = permute(Pi.x + oi);
+	float3 p = permute(px.x + Pi.y + oi); // p11, p12, p13
+	float3 ox = frac(p * K) - Ko;
+	float3 oy = mod7(floor(p * K)) * K - Ko;
+	float3 dx = Pf.x + 0.5 + jitter * ox;
+	float3 dy = Pf.y - of + jitter * oy;
+	float3 d1 = dx * dx + dy * dy; // d11, d12 and d13, squared
+	p = permute(px.y + Pi.y + oi); // p21, p22, p23
+	ox = frac(p * K) - Ko;
+	oy = mod7(floor(p * K)) * K - Ko;
+	dx = Pf.x - 0.5 + jitter * ox;
+	dy = Pf.y - of + jitter * oy;
+	float3 d2 = dx * dx + dy * dy; // d21, d22 and d23, squared
+	p = permute(px.z + Pi.y + oi); // p31, p32, p33
+	ox = frac(p * K) - Ko;
+	oy = mod7(floor(p * K)) * K - Ko;
+	dx = Pf.x - 1.5 + jitter * ox;
+	dy = Pf.y - of + jitter * oy;
+	float3 d3 = dx * dx + dy * dy; // d31, d32 and d33, squared
+	// Sort out the two smallest distances (F1, F2)
+	float3 d1a = min(d1, d2);
+	d2 = max(d1, d2); // Swap to keep candidates for F2
+	d2 = min(d2, d3); // neither F1 nor F2 are now in d3
+	d1 = min(d1a, d2); // F1 is now in d1
+	d2 = max(d1a, d2); // Swap to keep candidates for F2
+	d1.xy = (d1.x < d1.y) ? d1.xy : d1.yx; // Swap if smaller
+	d1.xz = (d1.x < d1.z) ? d1.xz : d1.zx; // F1 is in d1.x
+	d1.yz = min(d1.yz, d2.yz); // F2 is now not in d2.yz
+	d1.y = min(d1.y, d1.z); // nor in  d1.z
+	d1.y = min(d1.y, d2.x); // F2 is in d1.y, we're done.
+	return d1.xy;// sqrt(d1.xy);
+}
+
+float snoise(float2 v)
+{
+	static const float4 C = float4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
+		0.366025403784439,  // 0.5*(sqrt(3.0)-1.0)
+		-0.577350269189626,  // -1.0 + 2.0 * C.x
+		0.024390243902439); // 1.0 / 41.0
+// First corner
+	float2 i = floor(v + dot(v, C.yy));
+	float2 x0 = v - i + dot(i, C.xx);
+
+	// Other corners
+	float2 i1;
+	//i1.x = step( x0.y, x0.x ); // x0.x > x0.y ? 1.0 : 0.0
+	//i1.y = 1.0 - i1.x;
+	i1 = (x0.x > x0.y) ? float2(1.0, 0.0) : float2(0.0, 1.0);
+	// x0 = x0 - 0.0 + 0.0 * C.xx ;
+	// x1 = x0 - i1 + 1.0 * C.xx ;
+	// x2 = x0 - 1.0 + 2.0 * C.xx ;
+	float4 x12 = x0.xyxy + C.xxzz;
+	x12.xy -= i1;
+
+	// Permutations
+	i = mod289(i); // Avoid truncation effects in permutation
+	float3 p = permute(permute(i.y + float3(0.0, i1.y, 1.0))
+		+ i.x + float3(0.0, i1.x, 1.0));
+
+	float3 m = max(0.5 - float3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+	m = m * m;
+	m = m * m;
+
+	// Gradients: 41 points uniformly over a line, mapped onto a diamond.
+	// The ring size 17*17 = 289 is close to a multiple of 41 (41*7 = 287)
+
+	float3 x = 2.0 * frac(p * C.www) - 1.0;
+	float3 h = abs(x) - 0.5;
+	float3 ox = floor(x + 0.5);
+	float3 a0 = x - ox;
+
+	// Normalise gradients implicitly by scaling m
+	// Approximation of: m *= inversesqrt( a0*a0 + h*h );
+	m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+
+	// Compute final noise value at P
+	float3 g;
+	g.x = a0.x * x0.x + h.x * x0.y;
+	g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+	return 130.0 * dot(m, g);
+}
+
+[numthreads(8, 8, 8)]
+void CSMain(uint3 DTid : SV_DispatchThreadID)
+{
+	float3 uvr = DTid.xyz / g_VolumeRes;
+
+	float w = 0;
+	for (int i = 0; i < 4; ++i)
+		w += (1 - cellular(uvr * 2 * pow(2, i) + g_VolumeOffset, 2 * pow(2, i)) * 4) * pow(0.4, i);
+
+	float p = 0;
+	for (int i1 = 0; i1 < 6; ++i1)
+		p += pnoise(uvr * 2 * pow(2, i1) + g_VolumeOffset, 2 * pow(2, i1)) * pow(0.5, i1);
+
+	Result[DTid] = saturate(p) * 0.7 + saturate(w) * 0.3;
+}
