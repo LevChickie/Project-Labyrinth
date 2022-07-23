@@ -91,9 +91,16 @@ public class PlayerScript : MonoBehaviour
         }
         else if (triggerCollider.gameObject.tag == "Collectable")
         {
-            points += (int)Random.Range(0.0f, 10.0f);
+            if (triggerCollider.gameObject.layer == 10)
+            {
+                points += 1000;
+            }
+            else
+            {
+                points += (int)Random.Range(0.0f, 10.0f);
+            }
             triggerCollider.gameObject.SetActive(false);
-
+            
             setScore();
             if (lootCollectedPrefab)
                 Instantiate(lootCollectedPrefab, transform.position, lootCollectedPrefab.transform.rotation);

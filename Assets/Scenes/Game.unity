@@ -1050,7 +1050,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.148991, y: -0.000000019736925, z: -0.00000000297385, w: 0.9888386}
+  m_LocalRotation: {x: 0.148991, y: 0.0000000025527571, z: 3.8463538e-10, w: 0.9888386}
   m_LocalPosition: {x: -4.6000004, y: 5.8267236, z: -6.0390363}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1405,7 +1405,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1018048182}
-  m_LocalRotation: {x: 0.18934673, y: 0.000000025638174, z: -0.000000004943939, w: 0.9819103}
+  m_LocalRotation: {x: 0.18934672, y: -0.0000000038813077, z: 7.4845247e-10, w: 0.9819103}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1777,6 +1777,12 @@ MonoBehaviour:
   lightBeam: {fileID: 6937459416313997822, guid: e01215a7e30fff847adadbb0ede8696a, type: 3}
   enemy: {fileID: 3128428842055560215, guid: e100f516c7cb14044ba3a7d123665efa, type: 3}
   trap: {fileID: 371836572913421140, guid: b37344c0b57c6564c935edfd158ef2bc, type: 3}
+  statue: {fileID: 100000, guid: 7a93e07023f417142881f9ebea0e642b, type: 3}
+  mushroom: {fileID: 4274005551061015743, guid: 4b688994ae41fa440a4f57428d02ea38, type: 3}
+  barrel: {fileID: 7744435242754704808, guid: 07dafa82dcaefc24f8575a3b8a0418f2, type: 3}
+  chest: {fileID: 7692113639501323499, guid: 2db32a3229c5e4e4b9b31b3eea04603a, type: 3}
+  web: {fileID: 5569285044945411553, guid: f55336096ac43c8468cf1aab2bfaded4, type: 3}
+  cross: {fileID: 8159358968981760756, guid: b1df47324aa44bb4f89ead511028d729, type: 3}
   gameOver: {fileID: 1358926712}
   labirinthWidth: 100
   labirinthHeight: 100

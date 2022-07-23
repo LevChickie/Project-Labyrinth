@@ -14,6 +14,12 @@ public class GameBoardManager : MonoBehaviour
     public GameObject lightBeam;
     public GameObject enemy;
     public GameObject trap;
+    public GameObject statue;
+    public GameObject mushroom;
+    public GameObject barrel;
+    public GameObject chest;
+    public GameObject web;
+    public GameObject cross;
     public GameObject gameOver;
     private Vector3 euler;
     private bool survey = true;
@@ -218,14 +224,13 @@ public class GameBoardManager : MonoBehaviour
         Instantiate(wallVertical, new Vector3(25, 0f, 40), Quaternion.identity);
         Instantiate(wallVertical, new Vector3(45, 0f, 40), Quaternion.identity);
 
-        Instantiate(statue, new Vector3(-25, 0f, 40), Quaternion.identity);
-        Instantiate(wallVertical, new Vector3(15, 0f, 40), Quaternion.identity);
-        Instantiate(wallVertical, new Vector3(25, 0f, 40), Quaternion.identity);
-        Instantiate(wallVertical, new Vector3(45, 0f, 40), Quaternion.identity);
-        Instantiate(wallVertical, new Vector3(-25, 0f, 40), Quaternion.identity);
-        Instantiate(wallVertical, new Vector3(15, 0f, 40), Quaternion.identity);
-        Instantiate(wallVertical, new Vector3(25, 0f, 40), Quaternion.identity);
-        Instantiate(wallVertical, new Vector3(45, 0f, 40), Quaternion.identity);
+        Instantiate(mushroom, new Vector3(-13, 0f, 20), Quaternion.identity);
+        Instantiate(statue, new Vector3(5, 0f, 0), Quaternion.identity);
+        Instantiate(cross, new Vector3(47, 1f, 10), Quaternion.Euler(-90, 0, 0));
+        Instantiate(chest, new Vector3(-45, 0f, -45), Quaternion.identity);
+        Instantiate(web, new Vector3(-15, 0f, -9), Quaternion.identity);
+        Instantiate(web, new Vector3(37, 0f, 0), Quaternion.Euler(0, -90, 0));
+        Instantiate(barrel, new Vector3(0, 0f, 30), Quaternion.identity);
 
         euler = new Vector3(0, 0, 0);
         Instantiate(lightBeam, new Vector3(49, 20f, 0), Quaternion.Euler(euler));
@@ -233,7 +238,7 @@ public class GameBoardManager : MonoBehaviour
 
         arrow.GetComponent<GiantArrowCompass>().SetTarget(door_m);
 
-        position = new Vector3(-47, 0, -15);
+        position = new Vector3(-47, 0, 15);
         player.transform.localPosition = position;
         player.transform.position = position;
 
@@ -305,6 +310,15 @@ public class GameBoardManager : MonoBehaviour
         Instantiate(wallVertical, new Vector3(45, 0f, 30), Quaternion.identity);
         Instantiate(wallVertical, new Vector3(-45, 0f, 40), Quaternion.identity);
         Instantiate(wallVertical, new Vector3(-5, 0f, 40), Quaternion.identity);
+
+        Instantiate(mushroom, new Vector3(-45, 0f, -15), Quaternion.identity);
+        Instantiate(statue, new Vector3(-20, 0f, -15), Quaternion.identity);
+        Instantiate(cross, new Vector3(-5, 1, 2), Quaternion.Euler(-90,0,0));
+        Instantiate(chest, new Vector3(-20, 0f, 48), Quaternion.identity);
+        Instantiate(web, new Vector3(49, 0f, 20), Quaternion.identity);
+        Instantiate(web, new Vector3(-49, 0f, -19), Quaternion.identity);
+        Instantiate(barrel, new Vector3(10, 0f, -20), Quaternion.identity);
+
         euler = new Vector3(0, 90, 0);
         Instantiate(lightBeam, new Vector3(-35, 20f, -49), Quaternion.Euler(euler));
         GameObject door_m = Instantiate(door, new Vector3(-35, 1.7f, -49), Quaternion.Euler(euler));
