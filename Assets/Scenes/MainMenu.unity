@@ -736,7 +736,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Start the Game
+  m_Text: Play (Arrow wayfinding)
 --- !u!222 &1023208099
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -815,7 +815,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Continue
+  m_Text: Play (Lightbeam wayfinding)
 --- !u!222 &1155837962
 CanvasRenderer:
   m_ObjectHideFlags: 0

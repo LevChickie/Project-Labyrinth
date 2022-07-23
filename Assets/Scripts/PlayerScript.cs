@@ -84,7 +84,7 @@ public class PlayerScript : MonoBehaviour
         {
             points += (int)Random.Range(0.0f, 10.0f);
             triggerCollider.gameObject.SetActive(false);
-            Score.text = "Loot: " + points + " gold";
+            setScore();
         }
         else if (triggerCollider.gameObject.tag == "Enemy")
         {
@@ -213,12 +213,20 @@ public class PlayerScript : MonoBehaviour
     }
     public void lootDeadEnemies()
     {
+        Debug.Log("Points: "+points);
         points += (int)Random.Range(5, 15);
         if(Random.Range(0,10) > 6)
         {
+            Debug.Log("Health: "+health);
             health += (int)Random.Range(10, 30);
         }
-        Score.text = "Loot: " + points +" gold";
-
+        setScore();
+    }
+    public void setScore()
+    {
+        if (Score != null)
+        {
+            Score.text = "Loot: " + points + " gold";
+        }
     }
 }

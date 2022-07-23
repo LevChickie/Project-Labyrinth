@@ -8,11 +8,13 @@ public class MainMenuScript : MonoBehaviour
 {
     public void Continue()
     {
+        CrossSceneInformation.CrossSceneInfo = "lightbeam";
         SceneManager.LoadScene(PlayerPrefs.GetInt("SavedScene"));
     }
 
     public void StartGame()
     {
+        CrossSceneInformation.CrossSceneInfo = "arrow";
         SceneManager.LoadScene("Game");
     }
 
