@@ -11,6 +11,7 @@ TagManager:
   - Food
   - GameOverSystem
   - Door
+  - Target
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - Ground
   - EnemyLayer
   - Floor
-  - 
+  - Camera
   - 
   - 
   - 

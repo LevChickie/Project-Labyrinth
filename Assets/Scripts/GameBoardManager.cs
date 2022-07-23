@@ -47,7 +47,6 @@ public class GameBoardManager : MonoBehaviour
             InstantiateBeamScenario();
         }
         //wallCoordinates = new List<Vector2>();
-
         for (int i = -4; i <= 5; i++)
         {
             for (int j = -4; j <= 5; j++)
@@ -88,11 +87,13 @@ public class GameBoardManager : MonoBehaviour
                     position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.5f, j * 10 + Random.Range(-10f, 10f));
                     Instantiate(scores, position, Quaternion.identity);
                 }
+                /*
                 if (Random.Range(0f, 100f) > 70f)
                 {
                     position = new Vector3(i * 10 + Random.Range(-10f, 10f), 1f, j * 10 + Random.Range(-10f, 10f));
                     Instantiate(enemy, position, Quaternion.identity);
                 }
+                */
                 if (Random.Range(0f, 100f) > 85f)
                 {
                     position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.5f, j * 10 + Random.Range(-10f, 10f));
