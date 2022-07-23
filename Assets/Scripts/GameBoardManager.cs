@@ -22,7 +22,7 @@ public class GameBoardManager : MonoBehaviour
     public GameObject cross;
     public GameObject gameOver;
     private Vector3 euler;
-    private bool survey = true;
+    private bool survey = false;
     private bool randomGenerated = false;
     private int doorXCord;
     private int doorYCord;
