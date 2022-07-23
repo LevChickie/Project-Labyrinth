@@ -16,7 +16,8 @@ public class GameBoardManager : MonoBehaviour
     public GameObject trap;
     public GameObject gameOver;
     private Vector3 euler;
-
+    private bool survey = true;
+    private bool randomGenerated = false;
     private int doorXCord;
     private int doorYCord;
     public int labirinthWidth;
@@ -38,69 +39,71 @@ public class GameBoardManager : MonoBehaviour
         {
             Debug.Log("Arrow");
             lightBeam.SetActive(false);
-            InstantiateArrowScenario();
+            if(!randomGenerated)
+                InstantiateArrowScenario();
         }
         else
         {
             Debug.Log("Lightbeam");
             arrow.SetActive(false);
-            InstantiateBeamScenario();
+            if (!randomGenerated)
+                InstantiateBeamScenario();
         }
         //wallCoordinates = new List<Vector2>();
-        for (int i = -4; i <= 5; i++)
-        {
-            for (int j = -4; j <= 5; j++)
+        if (!survey) { 
+            for (int i = -4; i <= 5; i++)
             {
-                //verticalActive = false;
-                //chance = Random.Range(0f, 100f);
-                //if (chance > 40f)
-                //{
-                //    position = new Vector3(i * 10 - 5, 0, j * 10);
-                //    Instantiate(wallHorizontal, position, Quaternion.identity);
-                //    verticalActive = true;
-                //    //wallCoordinates.Add(new AssemblyCSharp.WallCoordinates(i, j, "horizontal", true));
-                //}
-                //else
-                //{
-                //    //wallCoordinates.Add(new AssemblyCSharp.WallCoordinates(i, j, "horizontal", false));
-                //}
-                //if (verticalActive && Random.Range(0f, 100f) > 75f)
-                //{
-                //    Quaternion spawnRotation = Quaternion.Euler(0, 90, 0);
-                //    position = new Vector3(i * 10 - 5, 0f, j * 10 - 5);
-                //    Instantiate(wallVertical, position, spawnRotation);
-                //}
-                //else if (!verticalActive && Random.Range(0f, 100f) > 40f)
-                //{
-                //    Quaternion spawnRotation = Quaternion.Euler(0, 90, 0);
-                //    position = new Vector3(i * 10 - 5, 0f, j * 10 - 5);
-                //    Instantiate(wallVertical, position, spawnRotation);
-                //}
-                if (Random.Range(0f, 100f) > 85f)
+                for (int j = -4; j <= 5; j++)
                 {
-                    position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.1f, j * 10 + Random.Range(-10f, 10f));
-                    Instantiate(trap, position, Quaternion.identity);
-                    //wallCoordinates.Add(new AssemblyCSharp.WallCoordinates(i, j, "vertical", true));
-                }
-                if (Random.Range(0f, 100f) > 60f)
-                {
-                    position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.5f, j * 10 + Random.Range(-10f, 10f));
-                    Instantiate(scores, position, Quaternion.identity);
-                }
-                /*
-                if (Random.Range(0f, 100f) > 70f)
-                {
-                    position = new Vector3(i * 10 + Random.Range(-10f, 10f), 1f, j * 10 + Random.Range(-10f, 10f));
-                    Instantiate(enemy, position, Quaternion.identity);
-                }
-                */
-                if (Random.Range(0f, 100f) > 85f)
-                {
-                    position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.5f, j * 10 + Random.Range(-10f, 10f));
-                    Instantiate(food, position, Quaternion.Euler(45 + Random.Range(-10f, 10f), 0.5f, 45 + Random.Range(-10f, 10f)));
-                }
+                    if (randomGenerated) {
+                        verticalActive = false;
+                        chance = Random.Range(0f, 100f);
+                        if (chance > 40f)
+                        {
+                            position = new Vector3(i * 10 - 5, 0, j * 10);
+                            Instantiate(wallHorizontal, position, Quaternion.identity);
+                            verticalActive = true;
+                        }
+                        if (verticalActive && Random.Range(0f, 100f) > 75f)
+                        {
+                            Quaternion spawnRotation = Quaternion.Euler(0, 90, 0);
+                            position = new Vector3(i * 10 - 5, 0f, j * 10 - 5);
+                            Instantiate(wallVertical, position, spawnRotation);
+                        }
+                        else if (!verticalActive && Random.Range(0f, 100f) > 40f)
+                        {
+                            Quaternion spawnRotation = Quaternion.Euler(0, 90, 0);
+                            position = new Vector3(i * 10 - 5, 0f, j * 10 - 5);
+                            Instantiate(wallVertical, position, spawnRotation);
+                        }
+                    }
+
+                    if (Random.Range(0f, 100f) > 85f)
+                    {
+                        position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.1f, j * 10 + Random.Range(-10f, 10f));
+                        Instantiate(trap, position, Quaternion.identity);
+                        //wallCoordinates.Add(new AssemblyCSharp.WallCoordinates(i, j, "vertical", true));
+                    }
+                    if (Random.Range(0f, 100f) > 60f)
+                    {
+                        position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.5f, j * 10 + Random.Range(-10f, 10f));
+                        Instantiate(scores, position, Quaternion.identity);
+                    }
+                    
+                    if (Random.Range(0f, 100f) > 70f)
+                    {
+                        position = new Vector3(i * 10 + Random.Range(-10f, 10f), 1f, j * 10 + Random.Range(-10f, 10f));
+                        Instantiate(enemy, position, Quaternion.identity);
+                    }
+                    
+                    if (Random.Range(0f, 100f) > 85f)
+                    {
+                        position = new Vector3(i * 10 + Random.Range(-10f, 10f), 0.5f, j * 10 + Random.Range(-10f, 10f));
+                        Instantiate(food, position, Quaternion.Euler(45 + Random.Range(-10f, 10f), 0.5f, 45 + Random.Range(-10f, 10f)));
+                    }
 
 
+                }
             }
         }
         //float DoorPosition = Random.Range(0f, 100f);
@@ -214,6 +217,16 @@ public class GameBoardManager : MonoBehaviour
         Instantiate(wallVertical, new Vector3(15, 0f, 40), Quaternion.identity);
         Instantiate(wallVertical, new Vector3(25, 0f, 40), Quaternion.identity);
         Instantiate(wallVertical, new Vector3(45, 0f, 40), Quaternion.identity);
+
+        Instantiate(statue, new Vector3(-25, 0f, 40), Quaternion.identity);
+        Instantiate(wallVertical, new Vector3(15, 0f, 40), Quaternion.identity);
+        Instantiate(wallVertical, new Vector3(25, 0f, 40), Quaternion.identity);
+        Instantiate(wallVertical, new Vector3(45, 0f, 40), Quaternion.identity);
+        Instantiate(wallVertical, new Vector3(-25, 0f, 40), Quaternion.identity);
+        Instantiate(wallVertical, new Vector3(15, 0f, 40), Quaternion.identity);
+        Instantiate(wallVertical, new Vector3(25, 0f, 40), Quaternion.identity);
+        Instantiate(wallVertical, new Vector3(45, 0f, 40), Quaternion.identity);
+
         euler = new Vector3(0, 0, 0);
         Instantiate(lightBeam, new Vector3(49, 20f, 0), Quaternion.Euler(euler));
         GameObject door_m = Instantiate(door, new Vector3(49, 1.7f, 0), Quaternion.Euler(euler));
